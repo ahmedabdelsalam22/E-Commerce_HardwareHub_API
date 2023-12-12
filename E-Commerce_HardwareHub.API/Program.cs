@@ -1,4 +1,7 @@
 using HardwareHub.Data;
+using HardwareHub.Data.Services.IRepositories;
+using HardwareHub.Data.Services.Repositories;
+using HardwareHub.Data.Services.UOW;
 using HardwareHub.Utilities;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +17,10 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(connectionString: connectionString));
+
+builder.Services.AddScoped<IProductRepository,ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
