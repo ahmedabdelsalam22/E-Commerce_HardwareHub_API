@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HardwareHub.Data.Services.UOW;
+using HardwareHub.Models.Dtos;
 using HardwareHub.Models.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,9 +41,11 @@ namespace E_Commerce_HardwareHub.API.Controllers
                     _apiResponse.IsSuccess = true;
                 }
 
+                var categoriesDto = _mapper.Map<List<CategoryDto>>(categories);
+
                 _apiResponse.StatusCode = HttpStatusCode.OK;
                 _apiResponse.IsSuccess = true;
-                _apiResponse.Result = categories;
+                _apiResponse.Result = categoriesDto;
             }
             catch(Exception ex) 
             {
