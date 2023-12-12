@@ -130,5 +130,52 @@ namespace E_Commerce_HardwareHub.API.Controllers
             }
             return _apiResponse;
         }
+
+        [HttpPut("category/{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> UpdateCategory([FromBody] CategoryDto categoryDto, int Id)
+        {
+            try
+            {
+                if (categoryDto == null)
+                {
+                    _apiResponse.StatusCode = HttpStatusCode.BadRequest;
+                    _apiResponse.Message = new List<string> { "model is invalid!" };
+                    _apiResponse.IsSuccess = true;
+                }
+
+                Category category = await _unitOfWork.categoryRepository.Get(filter: x => x.CategoryId == Id, tracked: false);
+                if (category == null)
+                {
+                    _apiResponse.StatusCode = HttpStatusCode.BadRequest;
+                    _apiResponse.Message = new List<string> { "no category found with this id!" };
+                    _apiResponse.IsSuccess = true;
+                }
+                if (category!.Name == categoryDto!.Name)
+                {
+                    _apiResponse.StatusCode = HttpStatusCode.BadRequest;
+                    _apiResponse.Message = new List<string> { "category exists!" };
+                    _apiResponse.IsSuccess = true;
+                }
+
+                Category categoryToDB = _mapper.Map<Category>(categoryDto);
+
+                categoryToDB.CategoryId = Id;
+
+                await _unitOfWork.categoryRepository.Update(categoryToDB);
+
+                _apiResponse.StatusCode = HttpStatusCode.OK;
+                _apiResponse.IsSuccess = true;
+                _apiResponse.Result = categoryToDB;
+            }
+            catch (Exception ex)
+            {
+                _apiResponse.IsSuccess = false;
+                _apiResponse.Message = new List<string> { ex.ToString() };
+            }
+            return _apiResponse;
+        }
     }
 }

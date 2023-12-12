@@ -14,7 +14,7 @@ namespace HardwareHub.Utilities
     {
        public MappingConfig() 
         {
-            CreateMap<Category,CategoryDto>();
+            CreateMap<Category,CategoryDto>().ReverseMap();
             CreateMap<CategoryCreateDto,Category>();
         }
     }
