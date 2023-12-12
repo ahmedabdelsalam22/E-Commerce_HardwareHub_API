@@ -24,23 +24,32 @@ namespace E_Commerce_HardwareHub.API.Controllers
         }
 
         [HttpGet("Categories")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetAllCategories() 
         {
             try 
             {
                 List<Category> categories = await _unitOfWork.categoryRepository.GetAll(tracked: false);
 
+                if (categories == null) 
+                {
+                    _apiResponse.StatusCode = HttpStatusCode.NotFound;
+                    _apiResponse.Message = new List<string> {"No data found!"};
+                    _apiResponse.IsSuccess = true;
+                }
+
                 _apiResponse.StatusCode = HttpStatusCode.OK;
                 _apiResponse.IsSuccess = true;
                 _apiResponse.Result = categories;
-                return Ok(_apiResponse);
             }
             catch(Exception ex) 
             {
                 _apiResponse.IsSuccess = false;
                 _apiResponse.Message = new List<string> {ex.ToString()};
             }
-            return BadRequest(_apiResponse);
+            return _apiResponse;
         }
     }
 }
