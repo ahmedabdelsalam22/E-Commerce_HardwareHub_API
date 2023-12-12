@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Azure;
 using HardwareHub.Data.Services.UOW;
 using HardwareHub.Models.Dtos;
 using HardwareHub.Models.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Diagnostics.Metrics;
 using System.Net;
 
 namespace E_Commerce_HardwareHub.API.Controllers
@@ -83,6 +85,43 @@ namespace E_Commerce_HardwareHub.API.Controllers
                 _apiResponse.StatusCode = HttpStatusCode.OK;
                 _apiResponse.IsSuccess = true;
                 _apiResponse.Result = categoryDto;
+            }
+            catch (Exception ex)
+            {
+                _apiResponse.IsSuccess = false;
+                _apiResponse.Message = new List<string> { ex.ToString() };
+            }
+            return _apiResponse;
+        }
+
+        [HttpPost("category/create")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> CreateCategory([FromBody] CategoryCreateDto categoryCreateDto)
+        {
+            try
+            {
+                if (categoryCreateDto == null)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var country = await _unitOfWork.categoryRepository.Get(filter: x => x.Name.ToUpper() == categoryCreateDto.Name.ToUpper());
+
+                if (country != null)
+                {
+                    _apiResponse.StatusCode = HttpStatusCode.BadRequest;
+                    _apiResponse.Message = new List<string> { "this category already exists" };
+                    _apiResponse.IsSuccess = true;
+                }
+
+                var categoryToDb = _mapper.Map<Category>(categoryCreateDto);
+
+                await _unitOfWork.categoryRepository.Create(categoryToDb);
+
+                _apiResponse.StatusCode = HttpStatusCode.OK;
+                _apiResponse.IsSuccess = true;
+                _apiResponse.Result = categoryToDb;
             }
             catch (Exception ex)
             {

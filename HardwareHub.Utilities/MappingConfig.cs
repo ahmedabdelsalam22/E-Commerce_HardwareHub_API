@@ -15,6 +15,7 @@ namespace HardwareHub.Utilities
        public MappingConfig() 
         {
             CreateMap<Category,CategoryDto>();
+            CreateMap<CategoryCreateDto,Category>();
         }
     }
 }
