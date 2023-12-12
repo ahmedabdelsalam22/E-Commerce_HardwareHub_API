@@ -15,8 +15,10 @@ namespace HardwareHub.Data.Services.UOW
         {
             _context = context;
             productRepository = new ProductRepository(_context);
+            categoryRepository = new CategoryRepository(_context);
         }
 
         public IProductRepository productRepository { get; private set; }
+        public ICategoryRepository categoryRepository { get; private set; }
     }
 }

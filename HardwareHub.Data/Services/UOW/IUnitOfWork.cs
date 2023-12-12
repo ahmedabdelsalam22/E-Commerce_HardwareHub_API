@@ -10,6 +10,7 @@ namespace HardwareHub.Data.Services.UOW
     public interface IUnitOfWork
     {
         public IProductRepository productRepository { get; }
+        public ICategoryRepository categoryRepository { get; }
 
     }
 }
