@@ -177,5 +177,34 @@ namespace E_Commerce_HardwareHub.API.Controllers
             }
             return _apiResponse;
         }
+
+        [HttpDelete("category/{Id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<APIResponse>> DeleteCountry(int Id)
+        {
+            try
+            {
+                Category category = await _unitOfWork.categoryRepository.Get(filter: x => x.CategoryId == Id);
+                if (category == null)
+                {
+                    _apiResponse.StatusCode = HttpStatusCode.NotFound;
+                    _apiResponse.Message = new List<string> { "country does't exists" };
+                    _apiResponse.IsSuccess = true;
+                }
+
+                await _unitOfWork.categoryRepository.Delete(category);
+
+                _apiResponse.StatusCode = HttpStatusCode.OK;
+                _apiResponse.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                _apiResponse.IsSuccess = false;
+                _apiResponse.Message = new List<string> { ex.ToString() };
+            }
+            return _apiResponse;
+        }
     }
 }
