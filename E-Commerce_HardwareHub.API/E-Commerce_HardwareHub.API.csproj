@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HardwareHub.Data\HardwareHub.Data.csproj" />
+    <ProjectReference Include="..\HardwareHub.Utilities\HardwareHub.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

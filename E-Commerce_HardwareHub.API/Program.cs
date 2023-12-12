@@ -1,4 +1,5 @@
 using HardwareHub.Data;
+using HardwareHub.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,8 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(connectionString: connectionString));
+
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 var app = builder.Build();
 
