@@ -50,6 +50,7 @@ namespace E_Commerce_HardwareHub.API.Controllers
             }
             catch(Exception ex) 
             {
+                _apiResponse.StatusCode = HttpStatusCode.BadRequest;
                 _apiResponse.IsSuccess = false;
                 _apiResponse.Message = new List<string> { ex.ToString() };
             }
@@ -87,6 +88,7 @@ namespace E_Commerce_HardwareHub.API.Controllers
             }
             catch (Exception ex)
             {
+                _apiResponse.StatusCode = HttpStatusCode.BadRequest;
                 _apiResponse.IsSuccess = false;
                 _apiResponse.Message = new List<string> { ex.ToString() };
             }
@@ -96,7 +98,7 @@ namespace E_Commerce_HardwareHub.API.Controllers
         [HttpPost("product/create")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> CreateProduct([FromBody] ProductDto productDto) // TODO: Replace Product with ProductDTO
+        public async Task<ActionResult<APIResponse>> CreateProduct([FromBody] ProductDto productDto) 
         {
             try 
             {
@@ -127,7 +129,7 @@ namespace E_Commerce_HardwareHub.API.Controllers
             {
                 _apiResponse.IsSuccess = false;
                 _apiResponse.Message = new List<string> { ex.ToString() };
-
+                _apiResponse.StatusCode = HttpStatusCode.BadRequest;
             }
             return _apiResponse;
         }
@@ -174,11 +176,39 @@ namespace E_Commerce_HardwareHub.API.Controllers
             }
             catch (Exception ex)
             {
+                _apiResponse.StatusCode = HttpStatusCode.BadRequest;
                 _apiResponse.IsSuccess = false;
                 _apiResponse.Message = new List<string> { ex.ToString() };
             }
             return _apiResponse;
         }
 
+        [HttpDelete("product/{productId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> DeleteProduct(int productId)
+        {
+            try
+            {
+                Product product = await _unitOfWork.productRepository.Get(filter: x => x.ProductId == productId, tracked: false);
+
+                if (product == null)
+                {
+                    return NotFound("product does't exists");
+                }
+                await _unitOfWork.productRepository.Delete(product);
+
+                _apiResponse.StatusCode = HttpStatusCode.OK;
+                _apiResponse.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                _apiResponse.StatusCode = HttpStatusCode.BadRequest;
+                _apiResponse.IsSuccess = false;
+                _apiResponse.Message = new List<string> { ex.ToString() };
+            }
+            return _apiResponse;
+        }
     }
 }
