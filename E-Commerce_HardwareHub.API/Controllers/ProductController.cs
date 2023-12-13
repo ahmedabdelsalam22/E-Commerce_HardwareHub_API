@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using HardwareHub.Data.Services.UOW;
 using HardwareHub.Models.Dtos;
 using HardwareHub.Models.Models;
@@ -130,5 +131,54 @@ namespace E_Commerce_HardwareHub.API.Controllers
             }
             return _apiResponse;
         }
+
+        [HttpPut("product/update/{productId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> UpdateProduct(int productId, [FromBody] ProductUpdateDto productToUpdate)
+        {
+            try
+            {
+                if (productToUpdate == null)
+                {
+                    _apiResponse.IsSuccess = false;
+                    _apiResponse.Message = new List<string> { "fill fields" };
+                }
+                if (productId != productToUpdate!.ProductId)
+                {
+                    return BadRequest(ModelState);
+                }
+                Product product = await _unitOfWork.productRepository.Get(filter: x => x.ProductId == productId, tracked: false);
+                if (product == null)
+                {
+                    return NotFound("No product exists with this id");
+                }
+                Category category = await _unitOfWork.categoryRepository.Get(filter: x => x.CategoryId == productToUpdate.CategoryDto.CategoryId);
+                if (category == null)
+                {
+                    return NotFound("No category exists with this id");
+                }
+
+                var categoryDto = _mapper.Map<CategoryUpdateDto>(category);
+
+                productToUpdate.CategoryDto = categoryDto;
+
+                var productToUpd = _mapper.Map<Product>(productToUpdate);
+
+                await _unitOfWork.productRepository.Update(productToUpd);
+
+                _apiResponse.StatusCode = HttpStatusCode.OK;
+                _apiResponse.IsSuccess = true;
+                _apiResponse.Result = productToUpd;
+            }
+            catch (Exception ex)
+            {
+                _apiResponse.IsSuccess = false;
+                _apiResponse.Message = new List<string> { ex.ToString() };
+            }
+            return _apiResponse;
+        }
+
     }
 }
