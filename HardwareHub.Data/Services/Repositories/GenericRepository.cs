@@ -31,7 +31,7 @@ namespace HardwareHub.Data.Services.Repositories
 
         }
 
-        public Task<T> Get(Expression<Func<T, bool>>? filter = null, bool tracked = true)
+        public Task<T> Get(Expression<Func<T, bool>>? filter = null, bool tracked = true, String? includeProperties = null)
         {
             IQueryable<T> query = _dbSet;
             if (filter != null)
@@ -41,11 +41,18 @@ namespace HardwareHub.Data.Services.Repositories
             if (!tracked)
             {
                 query = query.AsNoTracking();
+            }
+            if (includeProperties != null)
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
             }
             return query.FirstOrDefaultAsync();
         }
 
-        public Task<List<T>> GetAll(Expression<Func<T, bool>>? filter = null, bool tracked = true)
+        public Task<List<T>> GetAll(Expression<Func<T, bool>>? filter = null, bool tracked = true , String? includeProperties = null)
         {
             IQueryable<T> query = _dbSet;
             if (filter != null)
@@ -55,6 +62,13 @@ namespace HardwareHub.Data.Services.Repositories
             if (!tracked)
             {
                 query = query.AsNoTracking();
+            }
+            if (includeProperties != null)
+            {
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
             }
             return query.ToListAsync();
         }
