@@ -9,8 +9,8 @@ namespace HardwareHub.Data.Services.IRepositories
 {
     public interface IGenericRepository<T>
     {
-        Task<List<T>> GetAll(Expression<Func<T, bool>>? filter = null, bool tracked = true);
-        Task<T> Get(Expression<Func<T, bool>>? filter = null, bool tracked = true);
+        Task<List<T>> GetAll(Expression<Func<T, bool>>? filter = null, bool tracked = true , String? includeProperties = null);
+        Task<T> Get(Expression<Func<T, bool>>? filter = null, bool tracked = true, String ? includeProperties = null);
         Task Create(T entity);
         Task Delete(T entity);
     }
