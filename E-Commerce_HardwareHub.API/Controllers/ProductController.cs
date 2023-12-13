@@ -91,5 +91,44 @@ namespace E_Commerce_HardwareHub.API.Controllers
             }
             return _apiResponse;
         }
+
+        [HttpPost("product/create")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> CreateProduct([FromBody] ProductDto productDto) // TODO: Replace Product with ProductDTO
+        {
+            try 
+            {
+                if (productDto == null)
+                {
+                    return BadRequest(ModelState);
+                }
+                // related entities 
+                Category category = await _unitOfWork.categoryRepository.Get(tracked: false , filter:x=>x.Name.ToLower() == productDto.CategoryDto.Name.ToLower());
+
+                if (category == null)
+                {
+                    return BadRequest("category is't exists");
+                }
+                var categoryToCreate = _mapper.Map<CategoryCreateDto>(category);
+                productDto.CategoryDto = categoryToCreate;
+
+
+                var productToCreate = _mapper.Map<Product>(productDto);
+
+                await _unitOfWork.productRepository.Create(productToCreate);
+
+                _apiResponse.StatusCode = HttpStatusCode.OK;
+                _apiResponse.IsSuccess = true;
+                _apiResponse.Result = productToCreate;
+            }
+            catch (Exception ex)
+            {
+                _apiResponse.IsSuccess = false;
+                _apiResponse.Message = new List<string> { ex.ToString() };
+
+            }
+            return _apiResponse;
+        }
     }
 }
