@@ -18,6 +18,8 @@ namespace HardwareHub.Utilities
             CreateMap<CategoryCreateDto,Category>();
 
             CreateMap<Product, ProductDto>().ReverseMap();
+            CreateMap<Category, CategoryUpdateDto>();
+            CreateMap<ProductUpdateDto, Product>();
 
         }
     }
