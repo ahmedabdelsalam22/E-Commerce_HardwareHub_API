@@ -24,6 +24,9 @@ namespace E_Commerce_HardwareHub.API.Controllers
         }
 
         [HttpGet("products")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> GetAllProducts() 
         {
             try 
@@ -45,6 +48,43 @@ namespace E_Commerce_HardwareHub.API.Controllers
                 _apiResponse.Result = productsDtos;
             }
             catch(Exception ex) 
+            {
+                _apiResponse.IsSuccess = false;
+                _apiResponse.Message = new List<string> { ex.ToString() };
+            }
+            return _apiResponse;
+        }
+
+        [HttpGet("Product/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetProductById(int? id)
+        {
+            try
+            {
+                if (id == null || id == 0)
+                {
+                    _apiResponse.StatusCode = HttpStatusCode.NotFound;
+                    _apiResponse.Message = new List<string> { "invalid id!" };
+                    _apiResponse.IsSuccess = true;
+                }
+                Product product = await _unitOfWork.productRepository.Get(tracked: false, filter: x => x.ProductId == id, includeProperties: "Category");
+
+                if (product == null)
+                {
+                    _apiResponse.StatusCode = HttpStatusCode.NotFound;
+                    _apiResponse.Message = new List<string> { "No product found with this id!" };
+                    _apiResponse.IsSuccess = true;
+                }
+
+                var productDto = _mapper.Map<Product>(product);
+
+                _apiResponse.StatusCode = HttpStatusCode.OK;
+                _apiResponse.IsSuccess = true;
+                _apiResponse.Result = productDto;
+            }
+            catch (Exception ex)
             {
                 _apiResponse.IsSuccess = false;
                 _apiResponse.Message = new List<string> { ex.ToString() };
