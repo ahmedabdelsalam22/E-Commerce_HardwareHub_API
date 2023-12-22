@@ -21,6 +21,7 @@ namespace HardwareHub.Utilities
             CreateMap<Category, CategoryUpdateDto>();
             CreateMap<ProductUpdateDto, Product>();
 
+            CreateMap<ApplicationUser, ApplicationUserDto>();
         }
     }
 }
