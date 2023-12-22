@@ -33,7 +33,15 @@ namespace HardwareHub.Data.Services.AuthServices
             _mapper = mapper;
             _jwtOptions = jwtOptions.Value;
         }
-
+        public bool IsUniqueUser(string username)
+        {
+            var user = _dbContext.ApplicationUsers.FirstOrDefault(x => x.UserName == username);
+            if (user == null)
+            {
+                return true;
+            }
+            return false;
+        }
         public string GenerateToken(ApplicationUser user, IEnumerable<string> roles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
