@@ -1,5 +1,6 @@
 ﻿using HardwareHub.Data.Services.AuthServices;
 using HardwareHub.Models.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,5 +56,17 @@ namespace E_Commerce_HardwareHub.API.Controllers
                 return new ApplicationUserDto();
             }
         }
+        [HttpPost("assignRole")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> AssignRole(RegisterRequestDTO model, string roleName)
+        {
+            bool roleIsAssigned = await _service.AssignRole(model.Email, roleName!.ToUpper());
+            if (!roleIsAssigned)
+            {
+                return BadRequest("error occured!");
+            }
+            return Ok("role assigned successfully");
+        }
+
     }
 }
