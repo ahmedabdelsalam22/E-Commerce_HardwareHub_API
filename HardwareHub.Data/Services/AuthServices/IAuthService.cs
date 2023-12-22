@@ -13,5 +13,8 @@ namespace HardwareHub.Data.Services.AuthServices
         Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO);
         string GenerateToken(ApplicationUser user, IEnumerable<string> roles);
         bool IsUniqueUser(string username);
+        Task<ApplicationUserDto> Register(RegisterRequestDTO registerRequestDTO);
+
+        Task<bool> AssignRole(string email, string roleName);
     }
 }
