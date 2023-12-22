@@ -1,4 +1,5 @@
 using HardwareHub.Data;
+using HardwareHub.Data.Services.AuthServices;
 using HardwareHub.Data.Services.IRepositories;
 using HardwareHub.Data.Services.Repositories;
 using HardwareHub.Data.Services.UOW;
@@ -25,7 +26,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFramework
 builder.Services.AddScoped<IProductRepository,ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
-
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 var app = builder.Build();
