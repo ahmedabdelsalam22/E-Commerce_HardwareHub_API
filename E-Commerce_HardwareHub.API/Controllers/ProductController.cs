@@ -3,6 +3,7 @@ using Azure;
 using HardwareHub.Data.Services.UOW;
 using HardwareHub.Models.Dtos;
 using HardwareHub.Models.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -23,7 +24,7 @@ namespace E_Commerce_HardwareHub.API.Controllers
             _mapper = mapper;
             _apiResponse = new APIResponse();
         }
-
+        [Authorize]
         [HttpGet("products")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -57,6 +58,7 @@ namespace E_Commerce_HardwareHub.API.Controllers
             return _apiResponse;
         }
 
+        [Authorize]
         [HttpGet("Product/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -95,6 +97,7 @@ namespace E_Commerce_HardwareHub.API.Controllers
             return _apiResponse;
         }
 
+        [Authorize]
         [HttpPost("product/create")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -134,6 +137,7 @@ namespace E_Commerce_HardwareHub.API.Controllers
             return _apiResponse;
         }
 
+        [Authorize]
         [HttpPut("product/update/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -183,6 +187,7 @@ namespace E_Commerce_HardwareHub.API.Controllers
             return _apiResponse;
         }
 
+        [Authorize]
         [HttpDelete("product/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
